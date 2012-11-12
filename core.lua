@@ -3,18 +3,9 @@ ExtraAuctionSorts:RegisterEvent("AUCTION_HOUSE_SHOW")
 local _G = _G
 local GetAuctionSort = GetAuctionSort
 
-local function UpdateArrow(button)
-	local criterion, reverse = GetAuctionSort("list", 1)
-	if not reverse then
-		_G[button:GetName().."Arrow"]:SetTexCoord(0, 0.5625, 1.0, 0)
-	else
-		_G[button:GetName().."Arrow"]:SetTexCoord(0, 0.5625, 0, 1.0)
-	end
-end
-
 local function AUCTION_HOUSE_SHOW(frame, event, ...)
-	-- Local fixes a sizing bug later on.
-	local BQSwidth = BrowseQualitySort:GetWidth()
+	local AuctionFrame_OnClickSortColumn = AuctionFrame_OnClickSortColumn
+	local SortButton_UpdateArrow = SortButton_UpdateArrow
 
 	-- Add new sort types
 	-- Sort by BuyOut
@@ -37,6 +28,7 @@ local function AUCTION_HOUSE_SHOW(frame, event, ...)
 		{ column = 'quality',	reverse = false },
 		{ column = 'name',	reverse = false },
 	}
+
 	-- Buyout Sort
 	local BrowseBuyoutSort = CreateFrame("Button", "BrowseBuyoutSort", AuctionFrameBrowse, "AuctionSortButtonTemplate")
 	BrowseBuyoutSort:SetWidth(95)
@@ -44,7 +36,7 @@ local function AUCTION_HOUSE_SHOW(frame, event, ...)
 	BrowseBuyoutSort:SetText(BUYOUT_PRICE)
 	BrowseBuyoutSort:SetScript("OnClick", function()
 		AuctionFrame_OnClickSortColumn("list", "buyout")
-		UpdateArrow(BrowseBuyoutSort)
+		SortButton_UpdateArrow(BrowseBuyoutSort, "list", "buyout")
 	end)
 	BrowseBuyoutSort:ClearAllPoints()
 	BrowseBuyoutSort:SetPoint("LEFT", "BrowseCurrentBidSort", "RIGHT", -2, 0)
@@ -57,7 +49,7 @@ local function AUCTION_HOUSE_SHOW(frame, event, ...)
 	BrowseNameSort:SetText(NAME)
 	BrowseNameSort:SetScript("OnClick", function()
 		AuctionFrame_OnClickSortColumn("list", "name")
-		UpdateArrow(BrowseNameSort)
+		SortButton_UpdateArrow(BrowseNameSort, "list", "name")
 	end)
 	BrowseNameSort:ClearAllPoints()
 	BrowseNameSort:SetPoint("TOPLEFT", "AuctionFrameBrowse", "TOPLEFT", 186, -82)
@@ -66,7 +58,6 @@ local function AUCTION_HOUSE_SHOW(frame, event, ...)
 	-- Re-anchor standard quality sort button
 	BrowseQualitySort:ClearAllPoints()
 	BrowseQualitySort:SetPoint("LEFT", "BrowseNameSort", "RIGHT", -2, 0)
-	BrowseQualitySort:SetWidth(BQSwidth)
 	BrowseQualitySort:SetWidth(BrowseQualitySort:GetWidth() - BrowseNameSort:GetWidth())
 	BrowseQualitySort:Show()
 
@@ -81,12 +72,19 @@ local function AUCTION_HOUSE_SHOW(frame, event, ...)
 			oldSetWidth(self, width)
 		end
 	end
+	-- Hook this to hide arrows nicely.
+	hooksecurefunc("AuctionFrameBrowse_UpdateArrows", function()
+		SortButton_UpdateArrow(BrowseBuyoutSort, "list", "buyout")
+		SortButton_UpdateArrow(BrowseNameSort, "list", "name")
+	end)
 
+	-- Set button widths properly on first run
 	BrowseCurrentBidSort:SetWidth(207)
 
 	-- Finally, remove the SetScript so we don't do this every time we open the AH window.
 	ExtraAuctionSorts:SetScript("OnEvent", nil)
 	ExtraAuctionSorts:UnregisterEvent("AUCTION_HOUSE_SHOW")
+	AUCTION_HOUSE_SHOW = nil
 end
 
 ExtraAuctionSorts:SetScript("OnEvent", AUCTION_HOUSE_SHOW)
