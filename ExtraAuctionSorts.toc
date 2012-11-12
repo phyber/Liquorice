@@ -1,0 +1,8 @@
+## Interface: 50001
+## Title: ExtraAuctionSorts
+## Author: phyber
+## Notes: Adds Name and Buyout sort columns to the auction house.
+## Version: @project-version@
+## X-Category: Interface Enhancements
+
+core.lua
