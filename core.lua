@@ -1,18 +1,10 @@
 local ExtraAuctionSorts = CreateFrame("Frame", nil, UIParent)
-ExtraAuctionSorts:RegisterEvent("AH_LOADED")
+ExtraAuctionSorts:RegisterEvent("AUCTION_HOUSE_SHOW")
 local _G = _G
 local GetAuctionSort = GetAuctionSort
 
-local function NewSetWidth(obj, width)
-	if width >= 180 then
-		width = width - BrowseBuyoutSort:GetWidth() + 2
-	end
-
-	BrowseCurrentBidSort:SetWidth(width)
-end
-
-local function UpdateArrow(button, type, sort)
-	local criterion, reverse = GetAuctionSort(type, sort)
+local function UpdateArrow(button)
+	local criterion, reverse = GetAuctionSort("list", 1)
 	if not reverse then
 		_G[button:GetName().."Arrow"]:SetTexCoord(0, 0.5625, 1.0, 0)
 	else
@@ -20,7 +12,7 @@ local function UpdateArrow(button, type, sort)
 	end
 end
 
-local function AH_LOADED(frame, event, ...)
+local function AUCTION_HOUSE_SHOW(frame, event, ...)
 	-- Local fixes a sizing bug later on.
 	local BQSwidth = BrowseQualitySort:GetWidth()
 
@@ -52,7 +44,7 @@ local function AH_LOADED(frame, event, ...)
 	BrowseBuyoutSort:SetText(BUYOUT_PRICE)
 	BrowseBuyoutSort:SetScript("OnClick", function()
 		AuctionFrame_OnClickSortColumn("list", "buyout")
-		UpdateArrow(BrowseBuyoutSort, "list", "buyout")
+		UpdateArrow(BrowseBuyoutSort)
 	end)
 	BrowseBuyoutSort:ClearAllPoints()
 	BrowseBuyoutSort:SetPoint("LEFT", "BrowseCurrentBidSort", "RIGHT", -2, 0)
@@ -65,7 +57,7 @@ local function AH_LOADED(frame, event, ...)
 	BrowseNameSort:SetText(NAME)
 	BrowseNameSort:SetScript("OnClick", function()
 		AuctionFrame_OnClickSortColumn("list", "name")
-		UpdateArrow(BrowseNameSort, "list", "name")
+		UpdateArrow(BrowseNameSort)
 	end)
 	BrowseNameSort:ClearAllPoints()
 	BrowseNameSort:SetPoint("TOPLEFT", "AuctionFrameBrowse", "TOPLEFT", 186, -82)
@@ -79,11 +71,22 @@ local function AH_LOADED(frame, event, ...)
 	BrowseQualitySort:Show()
 
 	-- Replace the old SetWidth of BrowseCurrentBidSort
-	--hooksecurefunc(BrowseCurrentBidSort, "SetWidth", function(self, width)
-	--	NewSetWidth(self, width)
-	--end)
-	NewSetWidth(nil, 207)
+	-- Might taint, we'll see.
+	do
+		local oldSetWidth = BrowseCurrentBidSort.SetWidth
+		BrowseCurrentBidSort.SetWidth = function(self, width)
+			if width >= 180 then
+				width = width - BrowseBuyoutSort:GetWidth() + 2
+			end
+			oldSetWidth(self, width)
+		end
+	end
+
+	BrowseCurrentBidSort:SetWidth(207)
+
+	-- Finally, remove the SetScript so we don't do this every time we open the AH window.
+	ExtraAuctionSorts:SetScript("OnEvent", nil)
+	ExtraAuctionSorts:UnregisterEvent("AUCTION_HOUSE_SHOW")
 end
 
-
-ExtraAuctionSorts:SetScript("OnEvent", AH_LOADED)
+ExtraAuctionSorts:SetScript("OnEvent", AUCTION_HOUSE_SHOW)
