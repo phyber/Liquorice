@@ -25,6 +25,7 @@ local function AH_LOADED(frame, event, ...)
 	local BQSwidth = BrowseQualitySort:GetWidth()
 
 	-- Add new sort types
+	-- Sort by BuyOut
 	AuctionSort['list_buyout'] = {
 		{ column = 'duration',	reverse = false },
 		{ column = 'quantity',	reverse = false },
@@ -34,6 +35,7 @@ local function AH_LOADED(frame, event, ...)
 		{ column = 'bid',	reverse = false },
 		{ column = 'buyout',	reverse = false },
 	}
+	-- Sort by item name
 	AuctionSort['list_name'] = {
 		{ column = 'duration',	reverse = false },
 		{ column = 'quantity',	reverse = false },
@@ -50,7 +52,7 @@ local function AH_LOADED(frame, event, ...)
 	BrowseBuyoutSort:SetText(BUYOUT_PRICE)
 	BrowseBuyoutSort:SetScript("OnClick", function()
 		AuctionFrame_OnClickSortColumn("list", "buyout")
-		self:UpdateArrow(BrowseBuyoutSort, "list", "buyout")
+		UpdateArrow(BrowseBuyoutSort, "list", "buyout")
 	end)
 	BrowseBuyoutSort:ClearAllPoints()
 	BrowseBuyoutSort:SetPoint("LEFT", "BrowseCurrentBidSort", "RIGHT", -2, 0)
@@ -63,7 +65,7 @@ local function AH_LOADED(frame, event, ...)
 	BrowseNameSort:SetText(NAME)
 	BrowseNameSort:SetScript("OnClick", function()
 		AuctionFrame_OnClickSortColumn("list", "name")
-		self:UpdateArrow(BrowseNameSort, "list", "name")
+		UpdateArrow(BrowseNameSort, "list", "name")
 	end)
 	BrowseNameSort:ClearAllPoints()
 	BrowseNameSort:SetPoint("TOPLEFT", "AuctionFrameBrowse", "TOPLEFT", 186, -82)
@@ -76,6 +78,10 @@ local function AH_LOADED(frame, event, ...)
 	BrowseQualitySort:SetWidth(BrowseQualitySort:GetWidth() - BrowseNameSort:GetWidth())
 	BrowseQualitySort:Show()
 
+	-- Replace the old SetWidth of BrowseCurrentBidSort
+	--hooksecurefunc(BrowseCurrentBidSort, "SetWidth", function(self, width)
+	--	NewSetWidth(self, width)
+	--end)
 	NewSetWidth(nil, 207)
 end
 
