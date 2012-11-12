@@ -1,5 +1,5 @@
-local ExtraAuctionSorts = CreateFrame("Frame", nil, UIParent)
-ExtraAuctionSorts:RegisterEvent("AUCTION_HOUSE_SHOW")
+local Liquorice = CreateFrame("Frame", nil, UIParent)
+Liquorice:RegisterEvent("AUCTION_HOUSE_SHOW")
 local _G = _G
 local GetAuctionSort = GetAuctionSort
 
@@ -82,9 +82,9 @@ local function AUCTION_HOUSE_SHOW(frame, event, ...)
 	BrowseCurrentBidSort:SetWidth(207)
 
 	-- Finally, remove the SetScript so we don't do this every time we open the AH window.
-	ExtraAuctionSorts:SetScript("OnEvent", nil)
-	ExtraAuctionSorts:UnregisterEvent("AUCTION_HOUSE_SHOW")
+	Liquorice:SetScript("OnEvent", nil)
+	Liquorice:UnregisterEvent("AUCTION_HOUSE_SHOW")
 	AUCTION_HOUSE_SHOW = nil
 end
 
-ExtraAuctionSorts:SetScript("OnEvent", AUCTION_HOUSE_SHOW)
+Liquorice:SetScript("OnEvent", AUCTION_HOUSE_SHOW)

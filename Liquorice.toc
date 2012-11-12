@@ -1,7 +1,7 @@
 ## Interface: 50001
-## Title: ExtraAuctionSorts
+## Title: Liquorice
 ## Author: phyber
-## Notes: Adds Name and Buyout sort columns to the auction house.
+## Notes: Adds Name and Buyout Price sort columns to the auction house.
 ## Version: @project-version@
 ## X-Category: Interface Enhancements
 
