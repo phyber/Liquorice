@@ -1,7 +1,5 @@
 local Liquorice = CreateFrame("Frame", nil, UIParent)
 Liquorice:RegisterEvent("AUCTION_HOUSE_SHOW")
-local _G = _G
-local GetAuctionSort = GetAuctionSort
 
 local function AUCTION_HOUSE_SHOW(frame, event, ...)
 	local AuctionFrame_OnClickSortColumn = AuctionFrame_OnClickSortColumn
