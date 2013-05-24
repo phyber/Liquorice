@@ -1,4 +1,4 @@
-## Interface: 50200
+## Interface: 50300
 ## Title: Liquorice
 ## Author: phyber
 ## Notes: Adds Name and Buyout Price sort columns to the auction house.
